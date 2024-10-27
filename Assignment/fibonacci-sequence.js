@@ -1,30 +1,29 @@
-var expresss = require("express");
-var app = expresss();
-var PORT = 8080;
+const express = require('express');
+const app = express();
+const port = 9090;
 
-class AssignmentController {
-  static fibonacci(req, res) {
-    var n = parseInt(req.params.n, 10);
 
-    if (isNaN(n) || n < 0) {
-      return res.status(400).json({ error: "Invalid Input" });
+app.get('/Assignment/fibonacci-sequence/:n', (req, res) => {
+    const n = parseInt(req.params.n);
+
+    if (isNaN(n) || n < 1) {
+        return res.status(400).json({ error: 'n must be a positive integer' });
     }
 
-    var fibonacciSeq = [];
-    let a = 0,
-      b = 1;
+    const fibonacciSequence = generateFibonacciSequence(n);
+    res.json({ sequence: fibonacciSequence });
+});
 
-    for (let i = 0; i < n; i++) {
-      fibonacciSeq.push(a);
-      [a, b] = [b, a + b];
+function generateFibonacciSequence(n) {
+    const sequence = [0, 1];
+
+    for (let i = 2; i < n; i++) {
+        sequence[i] = sequence[i - 1] + sequence[i - 2];
     }
 
-    res.json({ fibonacciSeq });
-  }
+    return sequence.slice(0, n);
 }
 
-app.get("/Assignment/fibonacci-sequence/:n", AssignmentController.fibonacci);
-
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(port, () => {
+    console.log(`Server is running on http://localhost:${port}`);
 });
